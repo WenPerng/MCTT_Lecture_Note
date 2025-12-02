@@ -148,7 +148,7 @@ To facilitate discussion, let us define the \textit{excess size} of the watch li
     F_{\lg k}(x) &= 1, \\
     F_{j+1}(x) &= F_{j}\left(\frac{15}{16} + \frac{x^2}{16}\right) \cdot x^k. \label{eq:w12_branching}
 \end{align}
-\autoref{eq:w12_branching} defines a branching process, where with probability $\frac{15}{16}$ a suspicious prefix proves to be innocent, but with probability $\frac{1}{16}$ the number of suspected prefixes doubles. The term $x^k$ means that the $k$ infected people will each result in an innocent prefix.
+\autoref{eq:w12_branching} defines a \textit{branching process}, where with probability $\frac{15}{16}$ a suspicious prefix is proven to be innocent, but with probability $\frac{1}{16}$ the number of suspected prefixes doubles. The term $x^k$ means that the $k$ infected people will each result in an innocent prefix.
 
 Let us study the evolution of $F_j$. Define $f(x) = \frac{15}{16} + \frac{x^2}{16}$, such that
 \begin{equation}
@@ -164,7 +164,7 @@ Then
 \end{equation}
 in particular $g^{\circ j}(5) \approx 1 + \frac{1}{6^j}$. Hence, we can bound $F_j$ by
 \begin{equation*}
-    F_j(5) \le \prod_{i=0}^{j} g^{\circ i}(5)^k \le \prod_{i=0}^{j} \left(1 + \frac{20}{6^i+4}\right)^k \le \prod_{i=0}^{j}\exp\left(\frac{20}{6^i+4}\right)^k \le \exp(7k).
+    F_j(5) \le \prod_{i=0}^{j-\lg k} g^{\circ i}(5)^k \le \prod_{i=0}^{\infty} \left(1 + \frac{20}{6^i+4}\right)^k \le \prod_{i=0}^{\infty}\exp\left(\frac{20}{6^i+4}\right)^k \le \exp(7k).
 \end{equation*}
 Then we can bound $w_j$ by using the Chernoff bound:
 \begin{equation*}
@@ -178,9 +178,34 @@ Now that we have controlled $\abs{W_j}$, we are not satisfied, yet. We also want
 \end{equation*}
 This is the idea of \textit{total progeny}: the sum of all the population from past to present. Our discussion is further aided by the following result.
 \begin{theorem}[Dwass] \label{thm:w12_Dwass}
-    Let the total progeny of 
+    Let $\mathrm{TP}$ be the total progeny of some branching process whose probability generating function is $f(t)$, then
+    \begin{equation}
+        \mathrm{Pr}\{\mathrm{TP} = m\} = \frac{1}{m} [x^{m-1}]\left(f(x)^m\right),
+    \end{equation}
+    i.e., the $(m-1)$th coefficient of $f(x)^m$ over $m$.
 \end{theorem}
 
 \begin{remark}
     The original proof to \autoref{thm:w12_Dwass} is given by complex analysis. As a simple exercise, can you think of a combinatorial proof?
 \end{remark}
+
+Back to our case where $f(x) = \frac{15}{16} + \frac{x^2}{16}$, let $M_j$ be the population of suspicious innocent prefixes on layer $j$. We have $M_\infty \defeq \lim_{j\rightarrow\infty}$ as the total progeny. From the result of Dwass, we have the probability generating function of $M_\infty$ as
+\begin{align*}
+    h_\infty(x) &= \sum_{m=1}^{\infty} \frac{x^m}{m} [t^{m-1}]\left(f(t)^m\right) \\
+    &= \sum_{j=0}^{\infty} \frac{x^{2j+1}}{2j+1} \binom{2j+1}{j} \frac{15^{j+1}}{16^{2j+1}} \\
+    &= \frac{15x}{16} \sum_{j=0}^{\infty} \frac{1}{j+1}\binom{2j}{j} \left(\frac{15x^2}{16^2}\right)^j \\
+    &= \frac{15x}{16} \cdot \frac{1-\sqrt{1-4\cdot15x^2/16^2}}{2\cdot15x^2/16^2}.
+\end{align*}
+The last equality utilizes the well known generating function of the Catalan numbers, some extra details are provided in \aref{app:Catalan}. Let $H_j(x)$ be the total total progeny ($\mathrm{TTP}$) with $k$ added at each level until layer $j$, i.e.,
+\begin{equation}
+    H_j(x) = \prod_{i=0}^{j-\lg k} h_i(x)^k
+\end{equation}
+with $h_j(x)$ the probability generating function of $M_j$. Then, since $h_\infty(2)=3$,
+\begin{equation*}
+    H_j(2) \le \prod_{i=0}^{j} h_\infty(2)^k = 3^{kj}.
+\end{equation*}
+Using the Chernoff bound again:
+\begin{equation}
+    \mathrm{Pr}\{\mathrm{TTP} \ge 3k\lg n\} \le \frac{H_{\lg n}(2)}{2^{3k\lg n}} \le \frac{\exp(\ln3\cdot k\lg n)}{\exp(3\ln2\cdot k\lg n)} \le n^{-k}.
+\end{equation}
+This suggests that the time complexity is linear in $k\log n$ with high probability.

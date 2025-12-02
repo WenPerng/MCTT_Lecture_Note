@@ -206,8 +206,8 @@
 \def\sectionautorefname{Section}
 \def\subsectionautorefname{Section}
 \def\subsubsectionautorefname{Section}
-\def\figureautorefname{Figure.}
-\def\subfigureautorefname{Figure.}
+\def\figureautorefname{Figure}
+\def\subfigureautorefname{Figure}
 % \def\subtableautorefname{Table}
 \def\equationautorefname{Equation}
 \def\theoremautorefname{Theorem}

@@ -1,0 +1,59 @@
+\subsection{Inverse Problem}
+\lecture{27 May}
+
+We have discussed how we can generate a distribution with a finite support and rational probabilities from $\mathrm{Ber}(1/2)$'s, let us consider now consider the inverse problem: How many $\mathrm{Ber}(1/2)$'s can we generate from a single throw of a uniform distribution of support size $d$?
+
+\begin{theorem}
+    Given a uniform distribution with support of size $d$, we can generate at least
+    \begin{equation}
+        \lg d - 2
+    \end{equation}
+    i.i.d. $\mathrm{Ber}(1/2)$'s.
+\end{theorem}
+\begin{example}
+    Before we go into the proof, let us first consider an example. Given $X\sim\mathrm{Unif}([13])$, if the outcome is $X=1$ to $8$, then we can assign to $X$ three $\mathrm{Ber}(1/2)$'s. If the outcome is $X=9$ to $12$, then we can assign to $X$ only two $\mathrm{Ber}(1/2)$'s. For the remaining outcome of $X=13$, no randomness / information can be assigned. Hence, in expectation, the amount of $\mathrm{Ber}(1/2)$'s that one can generate with a single sample of $X$ is
+    \begin{equation*}
+        \sum (\text{probability}) \cdot (\text{amount}) = \frac{8}{13} \cdot 3 + \frac{4}{13} \cdot 2 + \frac{1}{13} \cdot 0 = \frac{32}{13},
+    \end{equation*}
+    which is larger than $\lg13-2 \approx 1.7$.
+\end{example}
+\begin{proof}
+    Continue on using the strategy above, assign to each cases a probability $p_i$ where one can assign $\lg(p_id)$ $\mathrm{Ber}(1/2)$'s. Note that $p_1\ge\frac{1}{2}$, $p_2\ge \frac{1}{2}(1-p_1)$, and so on. Observe that the expected amount of $\mathrm{Ber}(1/2)$'s one can generate is
+    \begin{equation*}
+        \sum_i p_i\lg(p_id) = \sum_i p_i\lg p_i + \sum_i p_i\lg d = \lg d - H(\{p_1,p_2,\cdots\}).
+    \end{equation*}  
+    The function $H$ is the entropy to a sequence of probabilities. Since we have $p_i \ge \frac{1}{2}(1-p_{i-1})$, one can observe that the sequence of probabilities
+    \begin{equation*}
+        \vec{p} \defeq (p_1,p_2,p_3,\cdots) \succeq \vec{q} \defeq (1/2,1/4,1/8,\cdots),
+    \end{equation*}
+    where $\succeq$ is the \textit{majorization} between two sequences (for more details, see \aref{app:majorization}). Then, since $\vec{p}$ \textit{majorizes} $\vec{q}$, or simply $\vec{p}\succeq\vec{q}$, by the \textit{Karamata inequality} over the concave function $-x\ln x$, we have that
+    \begin{equation*}
+        H(\vec{p}) \le H(\vec{q}).
+    \end{equation*}
+    Thus, the amount of $\mathrm{Ber}(1/2)$'s generated is
+    \begin{align*}
+        \lg d - H(\vec{p}) \ge \lg d - H(\vec{q}) = \lg d - 2.
+    \end{align*}
+    The theorem is proven.
+\end{proof}
+Another argument that one can use to proof the theorem above instead of using majorization is by using the additive property of conditional entropy:
+\begin{equation}
+    H(X,Y) = H(X\vert Y) + H(Y).
+\end{equation}
+
+\begin{remark}
+    The ``$-2$" from the two theorems above are actually the same thing.
+\end{remark}
+
+\subsection{The von Neumann Trick}
+The following problem comes about very naturally: given a biased coin with the bias unknown, how do we play a fair game of ``head or tail"? 
+
+The von Neumann trick for tackling this problem is:
+\begin{enumerate}
+    \item Toss the biased coin twice.
+    \item If you get a Head-Tail, return 1.
+    \item If you get a Tail-Head, return 0.
+    \item Otherwise, go back to the first step.
+\end{enumerate}
+
+

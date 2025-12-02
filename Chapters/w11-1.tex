@@ -145,8 +145,7 @@ How do we solve this system of equations to determine $x$?
 \end{example}
 
 \begin{example}
-    \color{red}
-    Consider this time $k=2$. For the $j$th column of $A$, let it represent $j$ in its $q$-ary representation ($q=p^n$), for example, $(a_0,a_1,a_2)$. Then we can map $j$ to a polynomial $f(x) = a_0 + a_1x + a_2x^2\in\mathbb{F}_q[x]$. We then evaluate $f$ at $0$, $1$, $\ldots$, $q-1$ and obtain the values $(b_0,b_1,\ldots,b_{q-1})\in\mathbb{F}_q^{q-1}$. We then further turn each $b_i\in\mathbb{F}_q$ into its binary representation, this large vector of 0's and 1's will be the $j$th column of $A$. The decoding then reduces to using the decoding scheme for Reed--Solomon codes, this was introduced in the work by Kautz and Singleton \cite{Kautz_Singleton_64}.
+    Consider this time $k=2$. For the $j$th column of $A$, let it represent $j$ in its $q$-ary representation ($q=p^n$), for example, $(a_0,a_1,a_2)$. Then we can map $j$ to a polynomial $f(x) = a_0 + a_1x + a_2x^2\in\mathbb{F}_q[x]$. We then evaluate $f$ at $0$, $1$, $\ldots$, $q-1$ and obtain the values $(b_0,b_1,\ldots,b_{q-1})\in\mathbb{F}_q^{q-1}$. We then further turn each $b_i\in\mathbb{F}_q$ into its binary representation, this large vector of 0's and 1's will be the $j$th column of $A$. This was introduced in the work by Kautz and Singleton \cite{Kautz_Singleton_64}. In fact, the decoding can reduce to a Reed--Solomon codes. For more details, one should refer to \autoref{sec:w16_polynomial_code}.
 \end{example}
 
 

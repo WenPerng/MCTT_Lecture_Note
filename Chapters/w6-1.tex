@@ -164,7 +164,7 @@ Again, $H$ need not be full rank ($h'\ge n-k$), but it will be nice if it is. Mo
 \begin{theorem} 
     An equivalence of the rank-nullity theorem states that
     \begin{equation}
-        \dim\mathcal{C} + \dim\mathcal{C}^\perp = n. \label{eq:rank-nullity}
+        \dim\mathcal{C} + \dim\mathcal{C}^\perp = n. \label{eq:w6_rank-nullity}
     \end{equation}
 \end{theorem}
 \begin{proof}
@@ -187,7 +187,7 @@ Again, $H$ need not be full rank ($h'\ge n-k$), but it will be nice if it is. Mo
             1 & 0 & 1 & 0 \\ 1 & 1 & 1 & 1
         \end{matrix}\right].
     \end{equation*}
-    Another prime example of a self-dual code is some special Reed--Muller codes, which were introduced back in \autoref{sec:RMcode}. The proof is given in \autoref{sec:w7_RM_RS}.
+    Another prime example of a self-dual code is some special Reed--Muller codes, which were introduced back in \autoref{sec:w4_RMcode}. The proof is given in \autoref{sec:w7_RM_RS}.
 \end{remark}
 
 \section{Punctured and Shortened Codes}
@@ -212,10 +212,10 @@ It is obvious to see that $\mathrm{Sho}_i(\mathcal{C})$ is a subspace of $\mathr
     Given a linear code $\mathcal{C}$, the following two dualities hold:
     \begin{align}
         \mathrm{Pun}_i(\mathcal{C}^\perp) &= \mathrm{Sho}_i(\mathcal{C})^\perp, \\
-        \mathrm{Sho}_i(\mathcal{C}^\perp) &= \mathrm{Pun}_i(\mathcal{C})^\perp. \label{eq:sho_pun_dual}
+        \mathrm{Sho}_i(\mathcal{C}^\perp) &= \mathrm{Pun}_i(\mathcal{C})^\perp. \label{eq:w6_sho_pun_dual}
     \end{align}
 \end{theorem}
-Since the dual code of a dual code is the original code, we will only be proving \autoref{eq:sho_pun_dual}.
+Since the dual code of a dual code is the original code, we will only be proving \autoref{eq:w6_sho_pun_dual}.
 \begin{proof}
     Consider any $x'\in\mathrm{Pun}_i(\mathcal{C})$ and $y'\in\mathrm{Sho}_i(\mathcal{C}^\perp)$. Also define $x\in\mathcal{C}$ and $y\in\mathcal{C}^\perp$ to be the code words that maps to $x$ and $y$ when their $i$th letter is removed, respectively. Then we have
     \begin{equation*}

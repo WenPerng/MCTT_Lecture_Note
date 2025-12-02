@@ -1,0 +1,29 @@
+\lecture{27 May}
+
+An interesting theorem regarding bipartite graphs and entropy is stated as follows. This is a generalization to the work by Suciu \cite{Suciu}:
+\begin{theorem}[Entropy and Degree of Graph]
+    Let $G(U,V,E)$ be a bipartite graph, where $U$ and $V$ are the two parts of vertices, and $E$ is a subset of $U\times V$. Let $(X,Y)\in E$ be a pair of random variables. Then
+    \begin{equation}
+        a H(X\vert Y) + H(X,Y) + bH(Y\vert X) \le \log\sum_{(u,v)\in E} \deg(v)^a\deg(u)^b
+    \end{equation}
+    for any $a,b>0$. The bound is tight.
+\end{theorem}
+\begin{proof}
+    \begin{align*}
+        aH(X\vert Y) + H(X,Y) + bH(Y\vert X) &= \mathbb{E}\left[\log\frac{1}{p(X,Y)}\right] + a \mathbb{E}\left[\log\frac{1}{p(X\vert Y)}\right] + b \mathbb{E}\left[\log\frac{1}{p(Y\vert X)}\right],
+    \end{align*}
+    where the expectations are taken with respect to the random variables $(X,Y)\in E$. Then, since for any probability measure $P$ (over a finite set) and any other distribution $Q$ subject to $Q=0\Rightarrow P=0$ we have the positivity to the KL-divergence:
+    \begin{equation*}
+        D_{\mathrm{KL}}(P\vert\vert Q) = \mathbb{E}_P\left[\log\frac{P}{Q}\right] \ge 0 \Rightarrow \mathbb{E}_P\left[\log \frac{1}{Q}\right] \ge \mathbb{E}_P\left[\log \frac{1}{P}\right].
+    \end{equation*}
+    Let us choose the distribution $Q$ as the uniform distribution: set $q(X\vert Y) = 1/\deg(Y)$ and $q(Y\vert X) = 1/\deg(X)$, then we have
+    \begin{align*}
+        aH(X\vert Y) + H(X,Y) + bH(Y\vert X) &\le \mathbb{E}\left[\log\frac{1}{p(X,Y)}\right] + a\mathbb{E}\left[\log\deg(Y)\right] + b\mathbb{E}\left[\log\deg(X)\right] \\
+        &= \mathbb{E}\left[\log\frac{\deg(Y)^a\deg(X)^b}{p(X,Y)}\right] \\
+        &\le \log\mathbb{E}\left[\frac{\deg(Y)^a\deg(X)^b}{p(X,Y)}\right] = \log \sum_{(u,v)\in E} \deg(v)^a\deg(u)^b,
+    \end{align*}
+    where the last inequality is by Jensen's.
+\end{proof}
+
+\section{Determinant Code}
+\cite{Determinant_Code}

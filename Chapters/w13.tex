@@ -14,19 +14,92 @@ Our preferred combination would be to have a nonadaptive noiseless group testing
 The current state of the art can only achieve any combination of four of the above, but never all five.
 \begin{enumerate}
     \item If we give up the first: then we can use the adaptive binary search method as introduced in the start of \autoref{sec:w12_bin_GT}.
-    \item If we give up the second: in GroTesQuE \cite{grotesque_GT} and SAFFRON \cite{saffron_GT}, we have the number of tests being $m=O(k\log k\log n)$.
-    \item If we give up the third: consider the binary tree folding as introduced in \autoref{sec:w12_bin_GT}. Normally when the tests are noiseless, we can cut all the leaves to a node if it is tested to be negative. However, for the case where the tests are noisy, say $\mathrm{BSC}(p)$-noisy, then we must do more tests to be sure. Setting a threshold for the amount the negative results that we accept it as truly being negative, {\color{red}the complexity becomes $p^{c\log k}$.}
-
-
-    \item If we give up the fourth:
-
-
-    \item If we give up the fifth:
-
     
-\end{enumerate}
+    \item If we give up the second: in GROTESQUE \cite{grotesque_GT} and SAFFRON \cite{saffron_GT}, we have the number of tests being $m=O(k\log k\log n)$.
+    
+    \item If we give up the third: consider the binary tree folding as introduced in \autoref{sec:w12_bin_GT}. Normally when the tests are noiseless, we can cut all the leaves to a node if it is tested to be negative. However, for the case where the tests are noisy, say $\mathrm{BSC}(p)$-noisy, then we must do more tests to be sure. Setting a threshold for the amount the negative results that we accept it as truly being negative, the complexity becomes $p^{c\log k}$.
+    
+    \item If we give up the fourth: we can relax the decoding complexity to $mn$ by using a random testing matrix $A$ with $\mathrm{Ber}(1/ck)$ entries. Every $y_i=\min(Ax,1)$ should hence behave like $\mathrm{Ber}(1/2)$ so that we can actually learn something from $y_i$ (the maximum entropy Bernoulli random variable). To decode, one computes $d_\mathrm{H}(y,Ax_i)$ for all $i\in[n]$. If the value is \textit{low}, then the $i$th person is sick; if the $i$th person is healthy, the Hamming distance should be $m/2$. Hence, we can set the threshold at about $m/3$. This is the COMP algorithm proposed by Chan et al. \cite{COMP_GT}. If done in a brute force manner, the decoding complexity is $m\binom{n}{k}$. Note that in real world applications: in the case of disease control, $n$ is often of the order of hundreds; in communication, $n$ is often of the order of $30^{160}$.
 
-\section{Distributed Matrix Multiplication}
+    \item If we give up the fifth: the number of FN and FP is of order $\varepsilon k$.    
+\end{enumerate}
+Let us discuss a bit more when we give up the fifth criterion and enforce the first four criteria. The current bound is
+\begin{equation}
+    \#\mathrm{FP \& FN} = O\left(2^{-\sqrt{\lg n}}k\right)
+\end{equation}
+on average.
+
+In GROTESQUE \cite{grotesque_GT} and SAFFRON \cite{saffron_GT}, they consider the following scheme for group testing:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/w13_GT_setup.png}
+    \caption{A general setup for group testing}
+    \label{fig:w13_GT_setup}
+\end{figure}
+See \autoref{fig:w13_GT_setup}, there are a total of $n$ people, each with an ID number of length $m_2$. Each person chooses three rows (out of the total $m_1$ rows) and fill in their ID number. Tests will be conducted for all the $m = m_1 \cdot m_2$ boxes, and the corresponding numbers in each boxes will show up if at least one person choosing the box is sick. For starters, let us choose an ID string of length $m_2$, with $m_2 = 100\lg n$ and $m_1=100k$.
+
+Assume that we can always recover the person of an ID string if that string is the only one occupying a row. What happens when multiple people choose the same row? The simplest scheme is to simply give up on any overlaps. Out of the $100k$ rows, there should be $3k$ rows that are sick, so the occupancy rate of sick rows is $3\%$. In other words, any random person has a probability of $(3\%)^3$ to pick exactly three sick rows. So the number of FPs and FNs is $(3\%)^3k = \varepsilon k$.
+
+How do we fix this? The following discussion follows from the work by Guruswami and Wang \cite{exponent_optimal_GT}.
+
+This time, let us set the length of the ID strings to $\lg n$, with $m_2 = 100\sqrt{\lg n}$ and $m_1=100k\sqrt{\lg n}$. The amount of tests doesn't change, as it is still of the order $O(k\lg n)$. Further, each person picks $10$ rows to fill in their ID a total of $10$ times (if a row ends without completing the ID string, the string continues on another row). In this setup, the occupancy rate of sick rows is
+\begin{equation*}
+    \frac{10\sqrt{\lg n} \times k}{100 k \sqrt{\lg n}} = 10\%.
+\end{equation*}
+A na\"ive analysis of the number of FPs and FNs will be
+\begin{equation*}
+    \mathrm{Pr}\{\text{all rows chosen are occupied}\} = \left(10\%\right)^{10\sqrt{\lg n}}.
+\end{equation*}
+Hurray! This is no longer a constant, but a decreasing function of $n$. However, the above analysis is crude, since one cannot identify themselves by using a single row. Instead, we should use Hoeffding's inequality:
+\begin{align}
+    \mathrm{Pr}\{\text{have fewer than }\sqrt{\lg n}\text{ rows left}\} &< \exp\left(-\text{const.}\times\text{deviation}\right) \\
+    &= \exp\left(-c\cdot 8 \sqrt{\lg n}\right).
+\end{align}
+On average, one should only loose $1$ row due to it being occupied, the worst case is loosing $9$ rows, hence the deviation is $8$ rows. Finally, we have
+\begin{equation}
+    \#\text{FP\&FN} = O\left(2^{-\sqrt{\lg n}}k\right) = o(k).
+\end{equation}
+We have achieved our goal.
+
+Some final remarks on how one decode themselves: 
+\begin{remark}
+    One can apply Reed--Solomon code to the $10\sqrt{\lg n}$ rows a person chooses to ensure any $\sqrt{\lg n}$ rows given can be used to decode the corresponding string.
+
+    Furthermore, how do we know whether two different rows correspond to the same person? The solution is simple, we simply add hash, say of length $50\sqrt{\log n}$, to the front of each row. This was also proposed in the work by Guruswami and Wang \cite{exponent_optimal_GT}.
+\end{remark}
+
+\begin{remark}
+    Instead of having $(\lg n)^{1/2}$, other exponents can be used.
+
+    Say each string of ID is of length $(\lg n)^{2/3}$, each person chooses enough rows such that $10$ copies of the ID are written. Let $m_1 = 100k(\lg n)^{2/3}$, $m_2 = 100(\lg n)^{1/3}$, and the length of hash is $50(\lg n)^{1/3}$. What happens now? The probability of having the chosen rows being too occupied will now be $\exp(-c\cdot 8(\lg n)^{2/3})$, this is much better than before! However, hash collisions may occur. The probability of hash collision will be $2^{-(\lg n)^{1/3}}$. The final rate of FPs and FNs will be the max of the two.
+
+    But wait, we can apply the same scheme again! We add hash values to the previous hash values that have collision. Then the number of FPs and FNs will be
+    \begin{equation*}
+        2^{-(\lg n)^{2/3}}k.
+    \end{equation*}
+    Why stop here? Applying this scheme again, we will have $2^{-(\lg n)^{3/4}}k$. Eventually, we can achieve
+    \begin{equation}
+        2^{-(\lg n)^{1-1/\tau}} k.
+    \end{equation}
+\end{remark}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Distributed Matrix Multiplication} \label{sec:w13_distr_mat_mult}
 Consider given the task of calculating the matrix product
 \begin{equation*}
     \left[\begin{matrix}
@@ -60,7 +133,7 @@ Let us continue on with this strategy, and define
         A_1 \\ A_2 \\ A_3 \\ A_1+A_2+A_3 \\ A_1+2A_2+3A_3
     \end{matrix}\right],
 \end{equation*}
-this is a 3-out-of-5 system (3/5-system). By incorporating more redundant tasks, we can prevent our computation being affected by slow GPUs. {\color{red}In fact, by employing an $[n,k]$-Reed--Solomon code, we can implement a $k/n$-system.}
+this is a 3-out-of-5 system (3/5-system). By incorporating more redundant tasks, we can prevent our computation being affected by slow GPUs. In fact, by employing an $[n,k]$-Reed--Solomon code, we can implement a $k/n$-system. This is called the \textit{polynomial code}, and will be discussed later in \autoref{sec:w16_polynomial_code}.
 
 We can do better! Besides defining $\tilde{A}_{2/3}$, we also define $\tilde{B}_{2/3} = [B_1,B_2,B_1+B_2]$. Then we can use $9$ GPUs to compute $\tilde{A}_{2/3}\tilde{B}_{2/3}$, and requiring only $5$ of them to obtain $AB$. Its extension will be a two-dimensional Reed--Solomon code.
 
@@ -69,7 +142,7 @@ In general, we find good matrices $G$ and $H$ as row and column operations, resp
     \tilde{A}\tilde{B} = (GA)(BH).
 \end{equation}
 
-\subsection{Polynomial Codes}
+\subsection{Polynomial Codes} \label{sec:w13_polynomial_codes}
 Let us introduce the method of polynomial codes \cite{polynomialcodes}: For $A$ and $B$ being $n\times n$ matrices, consider computing
 \begin{equation}
     (\vec{g}_s\cdot A)(B\cdot \vec{h}_s)
@@ -209,3 +282,4 @@ Compared to the direct method requiring $3^3=27$ multiplications, we can add $3$
     \end{matrix}\right] = L^{(24)} + L^{(25)} + L^{(26)},
 \end{equation}
 just like what we did for the distributed case of Strassen's method.
+
